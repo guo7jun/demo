@@ -1,4 +1,4 @@
-package com.java1234;
+package com.java1234.utils;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class StringDemo2 {
+public class StringUtil {
     /**
      * 移除字符串中连续出现的3个字符
      * @param string 原字符串
@@ -37,13 +37,13 @@ public class StringDemo2 {
             }
             // 查重操作，返回原字符串中存在的重复字符串
             subString = checkDuplicate(string, stringBuffer);
-            if(StringUtils.isNotBlank(subString)){
-                String lastChar = getLastChar(subString);
+            if (StringUtils.isNotBlank(subString)){
                 // 移除重复字符串
-                resultString = string.replace(subString, lastChar);
-                System.out.println("->" + resultString + "," + subString + " is replaced by " + lastChar);
+                resultString = string.replace(subString, "");
+                System.out.println("->" + resultString);
             }
         }
+
 
         // 如果字符串有重排序而且结果字符串的长度大于等于3,则继续执行截取操作
         if (StringUtils.isNotBlank(subString) && resultString.length() >= 3){
@@ -73,15 +73,5 @@ public class StringDemo2 {
             stringBuffer = stringBuffer.delete(1, 2);
             return checkDuplicate(originString, stringBuffer);
         }
-    }
-
-    /**
-     * 获取上一个字母
-     * @param string 需要替换的字符串
-     * @return
-     */
-    private static String getLastChar(String string){
-        char c = string.toCharArray()[0];
-        return c == 'a' ? "" : String.valueOf((char)(c - 1));
     }
 }

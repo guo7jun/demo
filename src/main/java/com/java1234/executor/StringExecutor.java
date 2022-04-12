@@ -1,5 +1,6 @@
-package com.java1234;
+package com.java1234.executor;
 
+import com.java1234.pojo.StringVO;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.Arrays;
@@ -8,17 +9,17 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class StringDemo1 {
-    /**
-     * 移除字符串中连续出现的3个字符
-     * @param string 原字符串
-     * @param count 第几次移除操作
-     */
-    public static void removeConsecutiveChar(String string, int count){
-        String resultString = string;
+/**
+ * 真正的任务执行者
+ */
+public class StringExecutor implements IExecutor {
+    @Override
+    public void removeConsecutiveChar(StringVO stringVO) {
+        String value = stringVO.getValue();
+        String resultString = value;
         String subString = null;
         // 统计各个字符的个数
-        Map<String, Long> strCountMap = Arrays.stream(string.split(""))
+        Map<String, Long> strCountMap = Arrays.stream(value.split(""))
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 
         // 出现次数大于等于3的字符
@@ -36,18 +37,24 @@ public class StringDemo1 {
                 stringBuffer.append(str);
             }
             // 查重操作，返回原字符串中存在的重复字符串
-            subString = checkDuplicate(string, stringBuffer);
-            if (StringUtils.isNotBlank(subString)){
+            subString = this.checkDuplicate(value, stringBuffer);
+            if(StringUtils.isNotBlank(subString)){
+                String lastChar = this.getLastChar(subString);
                 // 移除重复字符串
-                resultString = string.replace(subString, "");
-                System.out.println("->" + resultString);
+                resultString = value.replace(subString, lastChar);
+                if (subString.contains("a")){
+                    System.out.println("->" + resultString + "," + subString + " is deleted");
+                }else {
+                    System.out.println("->" + resultString + "," + subString + " is replaced by " + lastChar);
+                }
+
             }
         }
 
-
         // 如果字符串有重排序而且结果字符串的长度大于等于3,则继续执行截取操作
         if (StringUtils.isNotBlank(subString) && resultString.length() >= 3){
-            removeConsecutiveChar(resultString, ++count);
+            StringVO stringVO1 = new StringVO(resultString);
+            removeConsecutiveChar(stringVO1);
         }else  {
             return;
         }
@@ -73,5 +80,15 @@ public class StringDemo1 {
             stringBuffer = stringBuffer.delete(1, 2);
             return checkDuplicate(originString, stringBuffer);
         }
+    }
+
+    /**
+     * 获取上一个字母
+     * @param string 需要替换的字符串
+     * @return
+     */
+    private static String getLastChar(String string){
+        char c = string.toCharArray()[0];
+        return c == 'a' ? "" : String.valueOf((char)(c - 1));
     }
 }
